@@ -35,20 +35,7 @@ using namespace clang::tooling;
 
 
 static llvm::cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
-static llvm::cl::extrahelp MoreHelp(
-    "\tFor example, to run clang-bcapi on all files in a subtree of the\n"
-    "\tsource tree, use:\n"
-    "\n"
-    "\t  find path/in/subtree -name '*.cpp'|xargs clang-check\n"
-    "\n"
-    "\tor using a specific build path:\n"
-    "\n"
-    "\t  find path/in/subtree -name '*.cpp'|xargs clang-check -p build/path\n"
-    "\n"
-    "\tNote, that path/in/subtree and current directory should follow the\n"
-    "\trules described above.\n"
-    "\n"
-);
+static llvm::cl::extrahelp MoreHelp("usage:\n clang-bcapi <namespaces> <output_xml> <sources>");
 static llvm::cl::OptionCategory BcapiToolCategory("clang-bcapi options"); 
 llvm::cl::list<std::string> 
 NamespacesList(llvm::cl::Positional, llvm::cl::Required, llvm::cl::desc("<root namespaces>"), llvm::cl::OneOrMore);
