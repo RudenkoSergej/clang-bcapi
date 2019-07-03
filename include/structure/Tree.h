@@ -18,30 +18,27 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-namespace TestNS
+#pragma once
+
+#include <string>
+#include <map>
+
+#include <clang/AST/DeclCXX.h>
+
+#include "Base.h"
+#include "Namespace.h"
+
+namespace structure
 {
-    class TestClass
+    class Tree
     {
+        std::map<std::string, Namespace*> root_namespaces;        
+
     public:
-        int field;
-        void method() {};
+        Tree() {};
+        void AddNamespace(const clang::NamespaceDecl* decl);
+        Namespace* GetOrGenNamespace(const clang::NamespaceDecl* decl);
+        Namespace* GetNamespace(const clang::NamespaceDecl* decl) const;
+        Namespace* GetNamespace(const std::string& name) const;
     };
-
-    int function(int argument) { return 0; };
-
-    enum enumeration{ value };
-
-    namespace NestedNS
-    {
-        class TestClass
-        {
-        public:
-            int field;
-            virtual void method() { return ; };
-        };
-
-        void function(int argument) { return ; };
-
-        enum enumeration { value };
-    }
 }

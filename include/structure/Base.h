@@ -18,30 +18,21 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-namespace TestNS
+#pragma once
+
+#include <string>
+
+#include <clang/AST/DeclCXX.h>
+
+namespace structure
 {
-    class TestClass
+    struct Base
     {
-    public:
-        int field;
-        void method() {};
+        Base* parent = nullptr;
+        const clang::NamedDecl* decl;
+        std::string name;
+
+        Base(const clang::NamedDecl* decl_, Base *parent_ = nullptr, std::string name_ = "") 
+            : decl(decl_), parent(parent_), name(name_) {}
     };
-
-    int function(int argument) { return 0; };
-
-    enum enumeration{ value };
-
-    namespace NestedNS
-    {
-        class TestClass
-        {
-        public:
-            int field;
-            virtual void method() { return ; };
-        };
-
-        void function(int argument) { return ; };
-
-        enum enumeration { value };
-    }
 }

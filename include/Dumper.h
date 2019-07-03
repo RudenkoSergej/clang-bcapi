@@ -18,30 +18,26 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-namespace TestNS
+#pragma once 
+#include <boost/property_tree/ptree.hpp>
+
+#include "structure/Function.h"
+#include "structure/Namespace.h"
+#include "structure/Tree.h"
+
+class Dumper 
 {
-    class TestClass
-    {
-    public:
-        int field;
-        void method() {};
-    };
+private:
+    std::string filename;
+    const std::vector<std::string> &namespaces;
+    boost::property_tree::ptree tree;
+    boost::property_tree::ptree *cur_node;
+    std::string project_name = "Example";
 
-    int function(int argument) { return 0; };
+    void dumpNamespace(structure::Namespace* namepace_);
+    void dumpFunction(structure::Function* function);
 
-    enum enumeration{ value };
-
-    namespace NestedNS
-    {
-        class TestClass
-        {
-        public:
-            int field;
-            virtual void method() { return ; };
-        };
-
-        void function(int argument) { return ; };
-
-        enum enumeration { value };
-    }
-}
+public:
+    Dumper(const std::vector<std::string> &namespaces_, std::string filename_);
+    void dump(const structure::Tree &tree);
+};

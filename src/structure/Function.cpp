@@ -18,30 +18,21 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-namespace TestNS
+#include "structure/Function.h"
+
+using namespace clang;
+
+namespace structure
 {
-    class TestClass
+    Function::Function(const FunctionDecl* decl_, Namespace *parent_)
+        :Base(decl_, parent_, decl_->getNameAsString())
     {
-    public:
-        int field;
-        void method() {};
-    };
-
-    int function(int argument) { return 0; };
-
-    enum enumeration{ value };
-
-    namespace NestedNS
-    {
-        class TestClass
+        const FunctionDecl* func_decl = dyn_cast<FunctionDecl>(decl);
+        return_type = func_decl->getReturnType().getAsString();
+        for (const auto &param : func_decl->parameters())
         {
-        public:
-            int field;
-            virtual void method() { return ; };
-        };
-
-        void function(int argument) { return ; };
-
-        enum enumeration { value };
-    }
+            Argument* argument = new Argument(param, this);
+            arguments.push_back(argument);
+        }
+    };
 }

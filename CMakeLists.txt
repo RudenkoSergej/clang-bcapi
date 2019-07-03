@@ -40,6 +40,7 @@ add_subdirectory(examples)
 
 find_package(LLVM REQUIRED CONFIG)
 find_package(CLANG REQUIRED)
+find_package(Boost REQUIRED)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
@@ -50,6 +51,8 @@ message(STATUS "Using ClangConfig.cmake in: ${CLANG_DIR}")
 include_directories(
   ${LLVM_INCLUDE_DIRS}
   ${CLANG_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIR}
+  include
 )
 add_definitions(
   ${LLVM_DEFINITIONS}
@@ -61,7 +64,13 @@ message(STATUS "libs ${LLVM_LIBS} ${CLANG_LIBS}")
 link_directories(${LLVM_LIBS} ${CLANG_LIBS})
 
 set(SOURCES 
-	src/main.cpp
+    src/main.cpp
+    src/structure/Tree.cpp
+    src/structure/Function.cpp
+    src/structure/Namespace.cpp
+    src/structure/Argument.cpp    
+    src/Processor.cpp
+    src/Dumper.cpp
 )
 
 add_executable(clang-bcapi ${SOURCES})

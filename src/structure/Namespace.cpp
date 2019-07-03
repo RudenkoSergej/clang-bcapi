@@ -18,30 +18,14 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-namespace TestNS
+#include "structure/Namespace.h"
+
+using namespace clang;
+
+namespace structure
 {
-    class TestClass
+    Namespace::Namespace(const NamespaceDecl* decl_, Namespace *parent_)
+        :Base(decl_, parent_, decl_->getNameAsString())
     {
-    public:
-        int field;
-        void method() {};
-    };
-
-    int function(int argument) { return 0; };
-
-    enum enumeration{ value };
-
-    namespace NestedNS
-    {
-        class TestClass
-        {
-        public:
-            int field;
-            virtual void method() { return ; };
-        };
-
-        void function(int argument) { return ; };
-
-        enum enumeration { value };
     }
 }

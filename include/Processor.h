@@ -18,30 +18,23 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-namespace TestNS
-{
-    class TestClass
-    {
-    public:
-        int field;
-        void method() {};
-    };
+#pragma once
 
-    int function(int argument) { return 0; };
+#include <clang/ASTMatchers/ASTMatchers.h>
+#include <clang/ASTMatchers/ASTMatchFinder.h>
+#include <clang/AST/DeclCXX.h>
 
-    enum enumeration{ value };
+#include "Dumper.h"
+#include "structure/Tree.h"
 
-    namespace NestedNS
-    {
-        class TestClass
-        {
-        public:
-            int field;
-            virtual void method() { return ; };
-        };
+class Processor : public clang::ast_matchers::MatchFinder::MatchCallback {
+private:
+    structure::Tree namespaces;
 
-        void function(int argument) { return ; };
+    void processMethod(const clang::CXXMethodDecl* method_decl);
+    void processFunction(const clang::FunctionDecl* func_decl);
 
-        enum enumeration { value };
-    }
-}
+public:
+    virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result) override;
+    void dump(Dumper &dumper) const;
+};
