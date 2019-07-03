@@ -20,11 +20,12 @@
 
 #include "structure/Argument.h"
 
-using namespace clang;
+using clang::ParmVarDecl;
+using boost::weak_ptr;
 
 namespace structure
 {
-    Argument::Argument(const ParmVarDecl* decl_, Base *parent_)
+    Argument::Argument(const ParmVarDecl *decl_, weak_ptr<Base> parent_)
         :Base(decl_, parent_, decl_->getNameAsString()), type(decl_->getType().getAsString())
     {        
     };

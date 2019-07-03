@@ -19,10 +19,6 @@
 */
 
 #pragma once
-
-#include <string>
-#include <map>
-
 #include <boost/algorithm/string.hpp>
 
 #include "structure/Tree.h"
@@ -32,22 +28,22 @@ using namespace boost;
 
 namespace structure
 {
-    void Tree::AddNamespace(const NamespaceDecl* decl)
+    void Tree::AddNamespace(const NamespaceDecl *decl)
     {
         GetOrGenNamespace(decl);            
     }
 
-    Namespace* Tree::GetOrGenNamespace(const NamespaceDecl* decl)
+    shared_ptr<Namespace> Tree::GetOrGenNamespace(const NamespaceDecl *decl)
     {
-        Namespace *namespace_ptr = GetNamespace(decl);
+        shared_ptr<Namespace> namespace_ptr = GetNamespace(decl);
         if (namespace_ptr)
         {
             return namespace_ptr;
         }
         if (decl)
         {
-            const NamespaceDecl* parent_decl = dyn_cast_or_null<NamespaceDecl>(decl->getParent());
-            Namespace *parent_namespace = GetOrGenNamespace(parent_decl);
+            const NamespaceDecl *parent_decl = dyn_cast_or_null<NamespaceDecl>(decl->getParent());
+            shared_ptr<Namespace> parent_namespace = GetOrGenNamespace(parent_decl);
             std::string name = decl->getNameAsString();
             if (parent_namespace)
             {
@@ -56,7 +52,7 @@ namespace structure
                 {
                     return it->second;
                 }
-                Namespace *new_namespace = new Namespace(decl, parent_namespace);
+                shared_ptr<Namespace> new_namespace(new Namespace(decl, parent_namespace));
                 parent_namespace->nested_namespaces[name] = new_namespace;
                 return new_namespace;
             }
@@ -67,7 +63,7 @@ namespace structure
                 {
                     return it->second;
                 }
-                Namespace *new_namespace = new Namespace(decl, parent_namespace);
+                shared_ptr<Namespace> new_namespace(new Namespace(decl, parent_namespace));
                 root_namespaces[name] = new_namespace;
                 return new_namespace;
             }
@@ -75,16 +71,15 @@ namespace structure
         return nullptr;
     }
         
-    Namespace* Tree::GetNamespace(const NamespaceDecl* decl) const
+    shared_ptr<Namespace> Tree::GetNamespace(const NamespaceDecl *decl) const
     {
         if (decl)
         {
-            Namespace *parent_namespace = nullptr;
-            const NamespaceDecl* parent_decl = dyn_cast_or_null<NamespaceDecl>(decl->getParent());
-            std::map<std::string, Namespace*>::const_iterator it;
+            const NamespaceDecl *parent_decl = dyn_cast_or_null<NamespaceDecl>(decl->getParent());
+            std::map<std::string, shared_ptr<Namespace>>::const_iterator it;
             if (parent_decl)
             {
-                parent_namespace = GetNamespace(parent_decl);
+                shared_ptr<Namespace> parent_namespace = GetNamespace(parent_decl);
                 it = parent_namespace->nested_namespaces.find(decl->getNameAsString());
                 if (it != parent_namespace->nested_namespaces.end())
                 {
@@ -104,21 +99,21 @@ namespace structure
     }
 
 
-    Namespace* Tree::GetNamespace(const std::string &fullname) const
+    shared_ptr<Namespace> Tree::GetNamespace(const std::string &fullname) const
     {
         std::vector<std::string> namespaces;
         split(namespaces, fullname, is_any_of("\t "), token_compress_on);
         if (namespaces.size())
         {
-            const std::map<std::string, Namespace*>& root_ns = root_namespaces;
+            const std::map<std::string, shared_ptr<Namespace>>& root_ns = root_namespaces;
             auto root_ns_it = root_namespaces.find(namespaces[0]);
             if (root_ns_it == root_namespaces.end())
             {
                 return nullptr;
             }
 
-            Namespace* result = root_ns_it->second;
-            std::map<std::string, Namespace*>& current = result->nested_namespaces;
+            shared_ptr<Namespace> result = root_ns_it->second;
+            std::map<std::string, shared_ptr<Namespace>>& current = result->nested_namespaces;
             for (int index = 1; index < namespaces.size(); index++)
             {
                 auto nested_ns_it = current.find(namespaces[index]);

@@ -20,19 +20,17 @@
 
 #include "structure/Function.h"
 
-using namespace clang;
+using boost::shared_ptr;
+using boost::weak_ptr;
+using clang::FunctionDecl;
+using clang::dyn_cast;
 
 namespace structure
 {
-    Function::Function(const FunctionDecl* decl_, Namespace *parent_)
+    Function::Function(const FunctionDecl *decl_, weak_ptr<Namespace> parent_)
         :Base(decl_, parent_, decl_->getNameAsString())
     {
-        const FunctionDecl* func_decl = dyn_cast<FunctionDecl>(decl);
-        return_type = func_decl->getReturnType().getAsString();
-        for (const auto &param : func_decl->parameters())
-        {
-            Argument* argument = new Argument(param, this);
-            arguments.push_back(argument);
-        }
+        const FunctionDecl *func_decl = dyn_cast<FunctionDecl>(decl_);
+        this->return_type = func_decl->getReturnType().getAsString();
     };
 }

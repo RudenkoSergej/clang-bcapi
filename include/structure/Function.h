@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/shared_ptr.hpp>
+
 #include "Base.h"
 #include "Argument.h"
 #include "Namespace.h"
@@ -32,10 +34,10 @@ namespace structure
 {
     struct Function : public Base
     {
-        std::vector<Argument*> arguments;
+        std::vector<boost::shared_ptr<Argument>> arguments;
         std::string return_type;
 
-        Function(const clang::FunctionDecl* decl_, Namespace *parent_);
+        Function(const clang::FunctionDecl *decl_, boost::weak_ptr<Namespace> parent_);
 
     };
 }

@@ -20,11 +20,12 @@
 
 #include "structure/Namespace.h"
 
-using namespace clang;
+using boost::weak_ptr;
+using clang::NamespaceDecl;
 
 namespace structure
 {
-    Namespace::Namespace(const NamespaceDecl* decl_, Namespace *parent_)
+    Namespace::Namespace(const NamespaceDecl *decl_, weak_ptr<Namespace> parent_)
         :Base(decl_, parent_, decl_->getNameAsString())
     {
     }

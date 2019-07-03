@@ -25,6 +25,7 @@
 
 using namespace structure;
 using namespace boost::property_tree;
+using boost::shared_ptr;
 
 Dumper::Dumper(const std::vector<std::string> &namespaces_, std::string filename_)
     :namespaces(namespaces_), filename(filename_), cur_node(&this->tree)
@@ -32,7 +33,7 @@ Dumper::Dumper(const std::vector<std::string> &namespaces_, std::string filename
 
 }
 
-void Dumper::dumpNamespace(Namespace* namepace_)
+void Dumper::dumpNamespace(shared_ptr<Namespace> namepace_)
 {
     if (namepace_)
     {
@@ -53,7 +54,7 @@ void Dumper::dumpNamespace(Namespace* namepace_)
     }
 }
 
-void Dumper::dumpFunction(Function* function)
+void Dumper::dumpFunction(shared_ptr<Function> function)
 {
     ptree &function_node = cur_node->add("function", ""); 
     function_node.put("<xmlattr>.name", function->name);

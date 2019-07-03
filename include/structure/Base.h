@@ -22,17 +22,19 @@
 
 #include <string>
 
+#include <boost/weak_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <clang/AST/DeclCXX.h>
 
 namespace structure
 {
     struct Base
     {
-        Base* parent = nullptr;
+        boost::weak_ptr<Base> parent;
         const clang::NamedDecl* decl;
         std::string name;
 
-        Base(const clang::NamedDecl* decl_, Base *parent_ = nullptr, std::string name_ = "") 
+        Base(const clang::NamedDecl* decl_, boost::weak_ptr<Base> parent_, std::string name_ = "")
             : decl(decl_), parent(parent_), name(name_) {}
     };
 }

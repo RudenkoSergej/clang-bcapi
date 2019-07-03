@@ -34,8 +34,8 @@ private:
     boost::property_tree::ptree *cur_node;
     std::string project_name = "Example";
 
-    void dumpNamespace(structure::Namespace* namepace_);
-    void dumpFunction(structure::Function* function);
+    void dumpNamespace(boost::shared_ptr<structure::Namespace> namepace_);
+    void dumpFunction(boost::shared_ptr<structure::Function> function);
 
 public:
     Dumper(const std::vector<std::string> &namespaces_, std::string filename_);

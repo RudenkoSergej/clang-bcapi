@@ -23,6 +23,8 @@
 #include <string>
 #include <map>
 
+#include <boost/shared_ptr.hpp>
+
 #include "Base.h"
 
 
@@ -32,12 +34,12 @@ namespace structure
 
     struct Namespace : public Base
     {
-        std::map<std::string, Namespace*> nested_namespaces;
+        std::map<std::string, boost::shared_ptr<Namespace>> nested_namespaces;
         //std::map<std::string, Class*> classes;
-        std::vector<Function*> funtions;
+        std::vector<boost::shared_ptr<Function>> funtions;
         //std::vector<Enumeration*> enums;
         //std::vector<Template*> templates;
 
-        Namespace(const clang::NamespaceDecl* decl_, Namespace *parent_ = nullptr);
+        Namespace(const clang::NamespaceDecl *decl_, boost::weak_ptr<Namespace> parent_);
     };
 }

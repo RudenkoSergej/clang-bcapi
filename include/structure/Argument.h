@@ -21,6 +21,8 @@
 #pragma once
 #include <string>
 
+#include <boost/weak_ptr.hpp>
+
 #include "Base.h"
 
 namespace structure
@@ -28,6 +30,6 @@ namespace structure
     struct Argument: public Base
     {
         std::string type;
-        Argument(const clang::ParmVarDecl* decl_, Base *parent_);
+        Argument(const clang::ParmVarDecl *decl_, boost::weak_ptr<Base> parent_);
     };
 }

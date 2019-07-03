@@ -23,7 +23,7 @@
 #include <string>
 #include <map>
 
-#include <clang/AST/DeclCXX.h>
+#include <boost/shared_ptr.hpp>
 
 #include "Base.h"
 #include "Namespace.h"
@@ -32,13 +32,12 @@ namespace structure
 {
     class Tree
     {
-        std::map<std::string, Namespace*> root_namespaces;        
+        std::map<std::string, boost::shared_ptr<Namespace>> root_namespaces;
 
     public:
-        Tree() {};
         void AddNamespace(const clang::NamespaceDecl* decl);
-        Namespace* GetOrGenNamespace(const clang::NamespaceDecl* decl);
-        Namespace* GetNamespace(const clang::NamespaceDecl* decl) const;
-        Namespace* GetNamespace(const std::string& name) const;
+        boost::shared_ptr<Namespace> GetOrGenNamespace(const clang::NamespaceDecl* decl);
+        boost::shared_ptr<Namespace> GetNamespace(const clang::NamespaceDecl* decl) const;
+        boost::shared_ptr<Namespace> GetNamespace(const std::string& name) const;
     };
 }

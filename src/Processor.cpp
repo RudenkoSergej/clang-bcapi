@@ -18,7 +18,7 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-#include <iostream>
+#include <boost/shared_ptr.hpp>
 
 #include "Processor.h"
 #include "structure/Tree.h"
@@ -26,34 +26,33 @@
 #include "structure/Namespace.h"
 #include "structure/Function.h"
 
+using boost::shared_ptr;
 using namespace clang;
 using namespace clang::ast_matchers;
 using namespace structure;
 
-void Processor::processMethod(const CXXMethodDecl* method_decl)
+void Processor::processMethod(const CXXMethodDecl *method_decl)
 {
     return;
 }
 
-void Processor::processFunction(const FunctionDecl* func_decl)
+void Processor::processFunction(const FunctionDecl *func_decl)
 {
-    const DeclContext* decl = func_decl->getParent();
+    const DeclContext *decl = func_decl->getParent();
     if (decl && isa<NamespaceDecl>(decl))
     {
-        const NamespaceDecl* namespace_decl = dyn_cast<NamespaceDecl>(decl);
-        Namespace* parent_namespace = namespaces.GetOrGenNamespace(namespace_decl);
+        const NamespaceDecl *namespace_decl = dyn_cast<NamespaceDecl>(decl);
+        shared_ptr<Namespace> parent_namespace = namespaces.GetOrGenNamespace(namespace_decl);
         //ignore global functions
         if (parent_namespace)
         {
-            Function *function = new Function(func_decl, parent_namespace);
+            shared_ptr<Function> function(new Function(func_decl, parent_namespace));
             parent_namespace->funtions.push_back(function);
-
-            /*function->return_type = func_decl->getDeclaredReturnType();
-            function->arguments.reserve(func_decl->param_size());
-            for (ParmVarDecl *it : func_decl->parameters())
+            for (const auto &param : func_decl->parameters())
             {
-                function->arguments.push_back(it);
-            }*/
+                shared_ptr<Argument> argument(new Argument(param, function));
+                function->arguments.push_back(argument);
+            }
         }
     }
 }
