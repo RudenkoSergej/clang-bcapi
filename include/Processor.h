@@ -28,12 +28,12 @@
 #include "structure/Tree.h"
 
 class Processor : public clang::ast_matchers::MatchFinder::MatchCallback {
-private:
     structure::Tree namespaces;
 
     void processMethod(const clang::CXXMethodDecl *method_decl);
     void processFunction(const clang::FunctionDecl *func_decl);
-
+    void processConstructor(const clang::CXXConstructorDecl *ctor_decl);
+    void processRoutine(const clang::FunctionDecl *ctor_decl);
 public:
     virtual void run(const clang::ast_matchers::MatchFinder::MatchResult &Result) override;
     void dump(Dumper &dumper) const;

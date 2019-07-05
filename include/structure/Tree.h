@@ -25,8 +25,8 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "Base.h"
 #include "Namespace.h"
+#include "Class.h"
 
 namespace structure
 {
@@ -35,9 +35,10 @@ namespace structure
         std::map<std::string, boost::shared_ptr<Namespace>> root_namespaces;
 
     public:
-        void AddNamespace(const clang::NamespaceDecl* decl);
+        boost::shared_ptr<Class> GetOrGenClass(const clang::CXXRecordDecl *decl);
+        boost::shared_ptr<Class> GetClass(const clang::CXXRecordDecl *decl);
         boost::shared_ptr<Namespace> GetOrGenNamespace(const clang::NamespaceDecl* decl);
         boost::shared_ptr<Namespace> GetNamespace(const clang::NamespaceDecl* decl) const;
-        boost::shared_ptr<Namespace> GetNamespace(const std::string& name) const;
+        boost::shared_ptr<Namespace> GetNamespace(const std::string& fullname) const;
     };
 }

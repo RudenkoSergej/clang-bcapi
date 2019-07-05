@@ -20,28 +20,47 @@
 
 namespace TestNS
 {
-    class TestClass
-    {
-    public:
-        int field;
-        void method() {};
-    };
-
-    int function(int argument) { return 0; };
-
-    enum enumeration{ value };
-
     namespace NestedNS
     {
         class TestClass
         {
         public:
+        
+            class IgnoringClass
+            {
+                public:
+                int x;
+            };
+            
+            TestClass &operator += (const TestClass &rhs) {return *this;};
+            
             int field;
-            virtual void method() { return ; };
+            virtual void method() { return ; };            
         };
 
         void function(int argument) { return ; };
 
         enum enumeration { value };
     }
+    
+    class TestClass
+    {
+    public:
+        TestClass(): private_field(NestedNS::TestClass()) {};
+        int field;
+        NestedNS::TestClass method() { return private_field;};
+    private:
+        NestedNS::TestClass private_field;
+        void private_method() const {};
+    
+    };
+
+    class ChildClass : public TestClass
+    {
+        void private_method() const {};
+    };
+    
+    int function(int argument) noexcept { return 0; };
+
+    enum enumeration{ value };
 }

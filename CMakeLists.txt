@@ -71,6 +71,9 @@ set(SOURCES
     src/structure/Argument.cpp    
     src/Processor.cpp
     src/Dumper.cpp
+    src/structure/Class.cpp
+    src/structure/Method.cpp
+    src/structure/Constructor.cpp
 )
 
 add_executable(clang-bcapi ${SOURCES})

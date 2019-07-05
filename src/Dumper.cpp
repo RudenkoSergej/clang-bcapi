@@ -37,10 +37,11 @@ void Dumper::dumpNamespace(shared_ptr<Namespace> namepace_)
 {
     if (namepace_)
     {
-        ptree *saved_cur_node = cur_node;
         ptree &namespace_node = cur_node->add("namespace", "");
-        namespace_node.put("<xmlattr>.name", namepace_->name);
+        ptree *saved_cur_node = cur_node;
         cur_node = &namespace_node;
+
+        namespace_node.put("<xmlattr>.name", namepace_->name);
         for (const auto &it : namepace_->nested_namespaces)
         {
             dumpNamespace(it.second);
@@ -50,24 +51,143 @@ void Dumper::dumpNamespace(shared_ptr<Namespace> namepace_)
             dumpFunction(func);
         }
 
+        for (const auto &it : namepace_->classes)
+        {
+            dumpClass(it.second);
+        }
+
         cur_node = saved_cur_node;
     }
 }
 
 void Dumper::dumpFunction(shared_ptr<Function> function)
 {
-    ptree &function_node = cur_node->add("function", ""); 
-    function_node.put("<xmlattr>.name", function->name);
-    function_node.put("<xmlattr>.return", function->return_type);
-    /* TODO add fields:
-    "noexcept:bool"
-    "return_copy_or_add_ref:bool"
-    */
-    for (auto arg : function->arguments)
+    if (function)
     {
-        ptree &argument_node = function_node.add("argument", "");
-        argument_node.put("<xmlattr>.name", arg->name);
-        argument_node.put("<xmlattr>.type", arg->type);
+        ptree &function_node = cur_node->add("function", "");
+        ptree *saved_cur_node = cur_node;
+        cur_node = &function_node;
+
+        function_node.put("<xmlattr>.name", function->name);
+        function_node.put("<xmlattr>.return", function->return_type);
+        if (function->noexcept_keyword)
+        {
+            function_node.put("<xmlattr>.noexcept", function->noexcept_keyword);
+        }
+        /* TODO add fields:
+        "return_copy_or_add_ref:bool"
+        */
+        for (auto arg : function->arguments)
+        {
+            dumpArgument(arg);
+        }
+
+        cur_node = saved_cur_node;
+    }
+}
+
+void Dumper::dumpClass(shared_ptr<Class> class_)
+{
+    if (class_)
+    {
+        ptree &class_node = cur_node->add("class", "");
+        ptree *saved_cur_node = cur_node;
+        cur_node = &class_node;
+
+        class_node.put("<xmlattr>.name", class_->name);
+        class_node.put("<xmlattr>.implementation_class_name", class_->implementation_name);
+        class_node.put("<xmlattr>.implementation_class_header", class_->implementation_header);
+
+        if (!class_->base.empty())
+        {
+            class_node.put("<xmlattr>.base", class_->base);
+        }
+        if (class_->is_abstract)
+        {
+            class_node.put("<xmlattr>.abstract", class_->is_abstract);
+        }
+        /* TODO add fields:
+        "lifecycle:enum"
+        */
+        for (const auto &ctor : class_->constructors)
+        { 
+            dumpConstructor(ctor);
+        }
+        for (const auto &method : class_->methods)
+        {
+            dumpMethod(method);
+        }
+
+        cur_node = saved_cur_node;
+    }
+}
+
+void Dumper::dumpMethod(shared_ptr<Method> method)
+{
+    if (method)
+    {
+        ptree &method_node = cur_node->add("method", "");
+        ptree *saved_cur_node = cur_node;
+        cur_node = &method_node;
+
+        method_node.put("<xmlattr>.name", method->name);
+        method_node.put("<xmlattr>.return", method->return_type);
+        if (method->noexcept_keyword)
+        {
+            method_node.put("<xmlattr>.noexcept", method->noexcept_keyword);
+        }
+        if (method->const_keyword)
+        {
+            method_node.put("<xmlattr>.noexcept", method->const_keyword);
+        }
+        /* TODO add fields:
+        "return_copy_or_add_ref:bool"
+        */
+        for (auto arg : method->arguments)
+        {
+            dumpArgument(arg);
+        }
+
+        cur_node = saved_cur_node;
+    }
+}
+
+void Dumper::dumpConstructor(shared_ptr<Constructor> ctor)
+{
+    if (ctor)
+    {
+        ptree &ctor_node = cur_node->add("constructor", "");
+        ptree *saved_cur_node = cur_node;
+        cur_node = &ctor_node;
+
+        ctor_node.put("<xmlattr>.name", ctor->name);
+        if (ctor->noexcept_keyword)
+        {
+            ctor_node.put("<xmlattr>.noexcept", ctor->noexcept_keyword);
+        }
+        /* TODO add fields:
+        "noexcept:bool"
+        "explicit::bool"
+        */
+        for (auto arg : ctor->arguments)
+        {
+            dumpArgument(arg);
+        }
+
+        cur_node = saved_cur_node;
+    }
+}
+
+void Dumper::dumpArgument(shared_ptr<Argument> argument)
+{
+    if (argument)
+    {
+        ptree &argument_node = cur_node->add("argument", "");
+        argument_node.put("<xmlattr>.name", argument->name);
+        argument_node.put("<xmlattr>.type", argument->type);
+        /* TODO add fields:
+
+        */
     }
 }
 

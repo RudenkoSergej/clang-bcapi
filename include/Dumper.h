@@ -23,11 +23,13 @@
 
 #include "structure/Function.h"
 #include "structure/Namespace.h"
+#include "structure/Method.h"
+#include "structure/Constructor.h"
+#include "structure/Class.h"
 #include "structure/Tree.h"
 
 class Dumper 
 {
-private:
     std::string filename;
     const std::vector<std::string> &namespaces;
     boost::property_tree::ptree tree;
@@ -36,7 +38,10 @@ private:
 
     void dumpNamespace(boost::shared_ptr<structure::Namespace> namepace_);
     void dumpFunction(boost::shared_ptr<structure::Function> function);
-
+    void dumpClass(boost::shared_ptr<structure::Class> class_);
+    void dumpMethod(boost::shared_ptr<structure::Method> method); 
+    void dumpArgument(boost::shared_ptr<structure::Argument> argument);
+    void dumpConstructor(boost::shared_ptr<structure::Constructor> ctor);
 public:
     Dumper(const std::vector<std::string> &namespaces_, std::string filename_);
     void dump(const structure::Tree &tree);

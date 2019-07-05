@@ -18,29 +18,15 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "structure/Constructor.h"
 
-#include <string>
-#include <map>
-
-#include <boost/shared_ptr.hpp>
-
-#include "Base.h"
-
+using boost::weak_ptr;
+using clang::CXXConstructorDecl;
 
 namespace structure
 {
-    struct Function;
-    struct Class;
-
-    struct Namespace : public Base
+    Constructor::Constructor(const CXXConstructorDecl *decl_, weak_ptr<Class> parent_)
+        :Method(decl_, parent_)
     {
-        std::map<std::string, boost::shared_ptr<Namespace>> nested_namespaces;
-        std::map<std::string, boost::shared_ptr<Class>> classes;
-        std::vector<boost::shared_ptr<Function>> funtions;
-        //std::vector<Enumeration*> enums;
-        //std::vector<Template*> templates;
-
-        Namespace(const clang::NamespaceDecl *decl_, boost::weak_ptr<Namespace> parent_);
     };
 }

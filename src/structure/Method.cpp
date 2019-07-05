@@ -18,29 +18,19 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "structure/Method.h"
 
-#include <string>
-#include <map>
-
-#include <boost/shared_ptr.hpp>
-
-#include "Base.h"
-
+using boost::weak_ptr;
+using clang::CXXMethodDecl;
+using clang::dyn_cast;
 
 namespace structure
 {
-    struct Function;
-    struct Class;
-
-    struct Namespace : public Base
+    Method::Method(const CXXMethodDecl *decl_, weak_ptr<Class> parent_)
+        :Function(decl_, parent_)
     {
-        std::map<std::string, boost::shared_ptr<Namespace>> nested_namespaces;
-        std::map<std::string, boost::shared_ptr<Class>> classes;
-        std::vector<boost::shared_ptr<Function>> funtions;
-        //std::vector<Enumeration*> enums;
-        //std::vector<Template*> templates;
-
-        Namespace(const clang::NamespaceDecl *decl_, boost::weak_ptr<Namespace> parent_);
+        const CXXMethodDecl *method_decl = dyn_cast<CXXMethodDecl>(decl_);
+        //this->return_type = method_decl->getReturnType().getAsString();
+        this->const_keyword = method_decl->isConst();
     };
 }

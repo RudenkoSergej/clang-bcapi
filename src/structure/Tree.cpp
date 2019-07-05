@@ -28,9 +28,45 @@ using namespace boost;
 
 namespace structure
 {
-    void Tree::AddNamespace(const NamespaceDecl *decl)
+    shared_ptr<Class> Tree::GetOrGenClass(const CXXRecordDecl *decl)
     {
-        GetOrGenNamespace(decl);            
+        shared_ptr<Class> class_ptr = GetClass(decl);
+        if (class_ptr)
+        {
+            return class_ptr;
+        }
+        if (decl)
+        {
+            // TODO process cases with nested classes
+            const NamespaceDecl *parent_decl = dyn_cast_or_null<NamespaceDecl>(decl->getParent());
+            shared_ptr<Namespace> parent_namespace = GetOrGenNamespace(parent_decl);
+            if (parent_namespace)
+            {
+                shared_ptr<Class> new_class(new Class(decl, parent_namespace));
+                parent_namespace->classes[decl->getNameAsString()] = new_class;
+                return new_class;
+            }
+        }
+        return nullptr;
+    }
+
+    shared_ptr<Class> Tree::GetClass(const CXXRecordDecl *decl)
+    {
+        if (decl)
+        {
+            // TODO process cases with nested classes
+            const NamespaceDecl *parent_decl = dyn_cast_or_null<NamespaceDecl>(decl->getParent());
+            shared_ptr<Namespace> parent_namespace = GetOrGenNamespace(parent_decl);
+            if (parent_namespace)
+            {
+                auto it = parent_namespace->classes.find(decl->getNameAsString());
+                if (it != parent_namespace->classes.end())
+                {
+                    return it->second;
+                }
+            }
+        }
+        return nullptr;
     }
 
     shared_ptr<Namespace> Tree::GetOrGenNamespace(const NamespaceDecl *decl)
@@ -47,22 +83,12 @@ namespace structure
             std::string name = decl->getNameAsString();
             if (parent_namespace)
             {
-                auto it = parent_namespace->nested_namespaces.find(name);
-                if (it != parent_namespace->nested_namespaces.end())
-                {
-                    return it->second;
-                }
                 shared_ptr<Namespace> new_namespace(new Namespace(decl, parent_namespace));
                 parent_namespace->nested_namespaces[name] = new_namespace;
                 return new_namespace;
             }
             else
             {
-                auto it = root_namespaces.find(name);
-                if (it != root_namespaces.end())
-                {
-                    return it->second;
-                }
                 shared_ptr<Namespace> new_namespace(new Namespace(decl, parent_namespace));
                 root_namespaces[name] = new_namespace;
                 return new_namespace;
@@ -79,11 +105,13 @@ namespace structure
             std::map<std::string, shared_ptr<Namespace>>::const_iterator it;
             if (parent_decl)
             {
-                shared_ptr<Namespace> parent_namespace = GetNamespace(parent_decl);
-                it = parent_namespace->nested_namespaces.find(decl->getNameAsString());
-                if (it != parent_namespace->nested_namespaces.end())
+                if (shared_ptr<Namespace> parent_namespace = GetNamespace(parent_decl))
                 {
-                    return it->second;
+                    it = parent_namespace->nested_namespaces.find(decl->getNameAsString());
+                    if (it != parent_namespace->nested_namespaces.end())
+                    {
+                        return it->second;
+                    }
                 }
             }
             else

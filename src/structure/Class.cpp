@@ -18,29 +18,22 @@
 * along with clang-bcapi.If not, see < http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "structure/Class.h"
 
-#include <string>
-#include <map>
-
-#include <boost/shared_ptr.hpp>
-
-#include "Base.h"
-
+using boost::weak_ptr;
+using clang::CXXRecordDecl;
 
 namespace structure
 {
-    struct Function;
-    struct Class;
-
-    struct Namespace : public Base
+    Class::Class(const CXXRecordDecl *decl_, weak_ptr<Namespace> parent_)
+        :Base(decl_, parent_, decl_->getNameAsString())
     {
-        std::map<std::string, boost::shared_ptr<Namespace>> nested_namespaces;
-        std::map<std::string, boost::shared_ptr<Class>> classes;
-        std::vector<boost::shared_ptr<Function>> funtions;
-        //std::vector<Enumeration*> enums;
-        //std::vector<Template*> templates;
-
-        Namespace(const clang::NamespaceDecl *decl_, boost::weak_ptr<Namespace> parent_);
-    };
+        auto base_it = decl_->bases_begin();
+        if (base_it != decl_->bases_end())
+        this->base = base_it != decl_->bases_end()? base_it->getTypeSourceInfo()->getType().getAsString() : "";
+        this->implementation_name = decl_->getQualifiedNameAsString();
+        //TODO get the path relative to the output file
+        this->implementation_header = decl_->getASTContext().getSourceManager().getFilename(decl_->getLocation()).str();
+        this->is_abstract = decl_->isAbstract();
+    }
 }

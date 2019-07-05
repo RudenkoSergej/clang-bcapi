@@ -27,10 +27,12 @@ using clang::dyn_cast;
 
 namespace structure
 {
-    Function::Function(const FunctionDecl *decl_, weak_ptr<Namespace> parent_)
+    Function::Function(const FunctionDecl *decl_, weak_ptr<Base> parent_)
         :Base(decl_, parent_, decl_->getNameAsString())
     {
         const FunctionDecl *func_decl = dyn_cast<FunctionDecl>(decl_);
         this->return_type = func_decl->getReturnType().getAsString();
+        this->noexcept_keyword = 
+            func_decl->getExceptionSpecType() == clang::ExceptionSpecificationType::EST_BasicNoexcept;
     };
 }

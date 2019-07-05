@@ -20,27 +20,16 @@
 
 #pragma once
 
-#include <string>
-#include <map>
+#include <boost/weak_ptr.hpp>
 
-#include <boost/shared_ptr.hpp>
-
-#include "Base.h"
+#include "Method.h"
+#include "Class.h"
 
 
 namespace structure
 {
-    struct Function;
-    struct Class;
-
-    struct Namespace : public Base
+    struct Constructor : public Method
     {
-        std::map<std::string, boost::shared_ptr<Namespace>> nested_namespaces;
-        std::map<std::string, boost::shared_ptr<Class>> classes;
-        std::vector<boost::shared_ptr<Function>> funtions;
-        //std::vector<Enumeration*> enums;
-        //std::vector<Template*> templates;
-
-        Namespace(const clang::NamespaceDecl *decl_, boost::weak_ptr<Namespace> parent_);
+        Constructor(const clang::CXXConstructorDecl *decl_, boost::weak_ptr<Class> parent_);
     };
 }

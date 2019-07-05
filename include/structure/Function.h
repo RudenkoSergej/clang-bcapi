@@ -36,8 +36,9 @@ namespace structure
     {
         std::vector<boost::shared_ptr<Argument>> arguments;
         std::string return_type;
+        bool noexcept_keyword;
 
-        Function(const clang::FunctionDecl *decl_, boost::weak_ptr<Namespace> parent_);
+        Function(const clang::FunctionDecl *decl_, boost::weak_ptr<Base> parent_);
 
     };
 }
